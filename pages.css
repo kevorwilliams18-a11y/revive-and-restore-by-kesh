@@ -1,1 +1,9 @@
 .home-page .nav a:first-child,.shop-page .nav a:first-child{display:block}.nav [aria-current="page"]{text-decoration:underline;text-underline-offset:7px}.shop-page .collection.shop{padding-top:65px}.shop-page #collection-title{font:400 clamp(38px,4.8vw,64px)/1.15 'Playfair Display',Georgia,serif;letter-spacing:-.035em;color:var(--forest);margin-bottom:24px}.shop-page #collection-title em{color:#88621f}.home-page h1{font-size:clamp(54px,5.8vw,88px)}.home-page .story{padding-top:75px;padding-bottom:75px}.home-page .nav a,.shop-page .nav a{white-space:nowrap}@media(max-width:600px){.shop-page .header{flex-wrap:wrap}.shop-page .nav{width:100%;justify-content:space-between;padding-top:8px}.shop-page .collection.shop{padding-top:42px}.home-page .header{flex-wrap:wrap}.home-page .nav{gap:22px}.home-page h1{font-size:clamp(48px,10.5vw,70px)}}
+
+/* Subtle Halloween accents. */
+:root{--gold:#e4ad72}
+.seasonal-note{display:flex;justify-content:center;align-items:center;gap:12px;padding:13px 6%;background:#f5e8d8;color:#754326;font-size:12px;letter-spacing:.04em;border-bottom:1px solid #b9763a26;text-align:center}
+.seasonal-note span:first-child{font-size:19px}.seasonal-note span:last-child{font-size:22px;color:#a36634}
+.home-page .hero-copy{background:radial-gradient(ellipse at 0% 100%,#ce7c2920,transparent 65%)}
+.home-page .ribbon i{color:#a65f2f}.shop-page .product-card{border-top:2px solid #c98a4b55}
+@media(max-width:600px){.seasonal-note{font-size:11px;gap:8px;padding:11px 5%}}
