@@ -1,9 +1,14 @@
 .home-page .nav a:first-child,.shop-page .nav a:first-child{display:block}.nav [aria-current="page"]{text-decoration:underline;text-underline-offset:7px}.shop-page .collection.shop{padding-top:65px}.shop-page #collection-title{font:400 clamp(38px,4.8vw,64px)/1.15 'Playfair Display',Georgia,serif;letter-spacing:-.035em;color:var(--forest);margin-bottom:24px}.shop-page #collection-title em{color:#88621f}.home-page h1{font-size:clamp(54px,5.8vw,88px)}.home-page .story{padding-top:75px;padding-bottom:75px}.home-page .nav a,.shop-page .nav a{white-space:nowrap}@media(max-width:600px){.shop-page .header{flex-wrap:wrap}.shop-page .nav{width:100%;justify-content:space-between;padding-top:8px}.shop-page .collection.shop{padding-top:42px}.home-page .header{flex-wrap:wrap}.home-page .nav{gap:22px}.home-page h1{font-size:clamp(48px,10.5vw,70px)}}
 
-/* Subtle Halloween accents. */
-:root{--gold:#e4ad72}
-.seasonal-note{display:flex;justify-content:center;align-items:center;gap:12px;padding:13px 6%;background:#f5e8d8;color:#754326;font-size:12px;letter-spacing:.04em;border-bottom:1px solid #b9763a26;text-align:center}
-.seasonal-note span:first-child{font-size:19px}.seasonal-note span:last-child{font-size:22px;color:#a36634}
-.home-page .hero-copy{background:radial-gradient(ellipse at 0% 100%,#ce7c2920,transparent 65%)}
-.home-page .ribbon i{color:#a65f2f}.shop-page .product-card{border-top:2px solid #c98a4b55}
-@media(max-width:600px){.seasonal-note{font-size:11px;gap:8px;padding:11px 5%}}
+
+/* Halloween editorial treatment. */
+:root{--gold:#edb173;--forest:#17272a;--cream:#faf0e1;--ink:#253533}
+.topline{background:#dca069;color:#232727}.header,.footer{background:#172326}.header{border-bottom:1px solid #edb17338}
+.halloween-banner{position:relative;background:#171c20 url('halloween.svg') center/cover no-repeat;min-height:270px;color:#f8ecda;padding:38px 8%;border-bottom:1px solid #b9875155;overflow:hidden}
+.halloween-banner>div{position:relative;max-width:570px}.halloween-banner .season-label{color:#efb675;font-size:10px;letter-spacing:.3em;font-weight:700;margin-bottom:15px}.halloween-banner h2{font:400 clamp(30px,4vw,48px)/1.12 'Playfair Display',Georgia,serif;margin:0 0 16px;letter-spacing:-.025em}.halloween-banner p:last-child{font-size:13px;color:#d5c5b7;margin:0}
+.hero{background:#17272a}.home-page .hero-copy{background:radial-gradient(ellipse at 0% 100%,#aa62302e,transparent 70%)}.hero-visual:after{background:linear-gradient(0deg,#172326d9,transparent 65%)}
+.button{background:linear-gradient(135deg,#efbc81,#d99257);box-shadow:0 4px 18px #8a4a1614}.button:hover{background:#f4c995}.home-page .ribbon{background:#f2dfc7;border-color:#b67e4540}.home-page .ribbon i{color:#a65f2f}
+.shop-page{background:#f7ebda}.shop-page .product-card{border:1px solid #be8b5540;border-top:3px solid #b77743;box-shadow:0 8px 26px #533a2010}.shop-page #collection-title em{color:#9a582f}.product-status{color:#94562b!important}.shop-dialog{border-top:4px solid #c48a54}.shop-dialog::backdrop{background:#161921c9}.request-section{background:#eaddc8}.footer-top p{color:#efb675}
+@media(max-width:800px){.halloween-banner{min-height:250px;background-position:60% center;padding:32px 7%}.halloween-banner>div{max-width:58%}.halloween-banner h2{font-size:34px}.halloween-banner p:last-child{line-height:1.6;max-width:230px}}
+@media(max-width:480px){.halloween-banner{min-height:250px;background-position:63% center;background-size:auto 250px}.halloween-banner>div{max-width:65%}.halloween-banner h2{font-size:30px}.halloween-banner .season-label{font-size:9px;letter-spacing:.2em}.halloween-banner p:last-child{max-width:175px;font-size:12px}}
+@media(max-width:480px){.halloween-banner{background-position:right center}.halloween-banner:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#171c20 0%,#171c20e6 35%,transparent 82%)}.halloween-banner>div{z-index:1}}
