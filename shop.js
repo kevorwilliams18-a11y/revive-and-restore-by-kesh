@@ -42,7 +42,26 @@ function renderCart(){
   if(catalog.settings.delivery.some(d=>d.id===selected))$('#delivery').value=selected;
   $('#delivery-note').textContent=catalog.settings.deliveryNote;updateTotal();
 }
-function updateTotal(){if(!catalog)return;const subtotal=requestOnly?0:cart.reduce((n,i)=>n+(catalog.products.find(p=>p.id===i.id)?.price||0)*i.qty,0),d=catalog.settings.delivery.find(d=>d.id===$('#delivery').value);$('#checkout-total').textContent=requestOnly?'Price quote pending':money(subtotal-cartDiscount()+(d?.fee||0))+(!d||d.pending?(d?.fee?' estimated':' + delivery quote'):'');$('#checkout-discount').textContent=requestOnly?'Confirmed with quote':'−'+money(cartDiscount());$('#delivery-charge').textContent=d&&d.fee?money(d.fee)+(d.pending?' estimated':''):d&&!d.pending?money(d.fee):'To be quoted';}
+
+function updateDeliveryFields(){
+  const isKnutsford=/knutsford/i.test(catalog?.settings.delivery.find(d=>d.id===$('#delivery').value)?.name||'');
+  const parish=$('[name="parish"]'),address=$('[name="address"]');
+  let pickup=$('#knutsford-parish');
+  if(!pickup){
+    const label=document.createElement('label');label.id='knutsford-pickup-field';label.className='wide';
+    label.innerHTML='<span>Knutsford pickup parish</span><select id="knutsford-parish" name="pickupParish" aria-describedby="knutsford-pickup-note">'+parish.innerHTML.replace('Select parish','Choose your pickup parish')+'</select><small id="knutsford-pickup-note">Choose the parish where you want to collect your parcel. We’ll confirm the available Knutsford branch and final fee before payment.</small>';
+    $('#delivery').closest('label').after(label);pickup=$('#knutsford-parish');
+    pickup.onchange=()=>{attempt=null;};
+  }
+  $('#knutsford-pickup-field').hidden=!isKnutsford;
+  pickup.disabled=!isKnutsford;pickup.required=isKnutsford;
+  parish.closest('label').hidden=isKnutsford;parish.disabled=isKnutsford;parish.required=!isKnutsford;
+  address.closest('label').firstChild.textContent=isKnutsford?'Preferred Knutsford branch (optional)':'Delivery address';
+  address.required=!isKnutsford;
+  address.placeholder=isKnutsford?'Enter a branch if you have a preference':'Street address and delivery directions';
+}
+
+function updateTotal(){updateDeliveryFields();if(!catalog)return;const subtotal=requestOnly?0:cart.reduce((n,i)=>n+(catalog.products.find(p=>p.id===i.id)?.price||0)*i.qty,0),d=catalog.settings.delivery.find(d=>d.id===$('#delivery').value);$('#checkout-total').textContent=requestOnly?'Price quote pending':money(subtotal-cartDiscount()+(d?.fee||0))+(!d||d.pending?(d?.fee?' estimated':' + delivery quote'):'');$('#checkout-discount').textContent=requestOnly?'Confirmed with quote':'−'+money(cartDiscount());$('#delivery-charge').textContent=d&&d.fee?money(d.fee)+(d.pending?' estimated':''):d&&!d.pending?money(d.fee):'To be quoted';}
 function checkout(special=false){if(!catalog)return;requestOnly=special;attempt=null;$('#cart-dialog').close();$('#checkout-form').hidden=false;$('#confirmation').hidden=true;$('#checkout-title').textContent=special?'Your special request':'Pre-order checkout';$('#notes-label').textContent=special?'Requested oil, bottle size and quantity':'Order notes or special requests (optional)';$('#order-notes').required=special;$('#place-order').textContent=special?'Send special request':'Send pre-order request';$('#checkout-error').textContent='';$('#checkout-dialog').showModal();renderCart();}
 $('#open-cart').onclick=()=>{$('#cart-dialog').showModal();renderCart();};
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{if(!sending)b.closest('dialog').close();});
@@ -53,7 +72,7 @@ $('#checkout-dialog').addEventListener('cancel',e=>{if(sending)e.preventDefault(
 $('#checkout-form').onsubmit=async e=>{
   e.preventDefault();if(sending||!catalog||(!requestOnly&&!cart.length))return;
   const f=new FormData(e.currentTarget),d=catalog.settings.delivery.find(d=>d.id===f.get('delivery'));
-  const draft={name:f.get('name'),phone:f.get('phone'),email:f.get('email'),address:f.get('address'),parish:f.get('parish'),notes:f.get('notes'),website:f.get('website'),payment:f.get('payment'),deliveryId:d?.id||'',deliveryFee:d?.fee||0,requestOnly,items:requestOnly?[]:cart.map(i=>({id:i.id,qty:i.qty,price:catalog.products.find(p=>p.id===i.id)?.price}))};
+  const draft={name:f.get('name'),phone:f.get('phone'),email:f.get('email'),address:$('#knutsford-parish')&&!$('#knutsford-parish').disabled?'Knutsford pickup — '+f.get('pickupParish')+(f.get('address')?' | Preferred branch: '+f.get('address'):' | Branch to be confirmed'):f.get('address'),parish:$('#knutsford-parish')&&!$('#knutsford-parish').disabled?f.get('pickupParish'):f.get('parish'),notes:f.get('notes'),website:f.get('website'),payment:f.get('payment'),deliveryId:d?.id||'',deliveryFee:d?.fee||0,requestOnly,items:requestOnly?[]:cart.map(i=>({id:i.id,qty:i.qty,price:catalog.products.find(p=>p.id===i.id)?.price}))};
   if(!attempt)attempt={id:crypto.randomUUID(),...draft};sending=true;$('#checkout-fields').disabled=true;$('#place-order').textContent='Sending request…';$('#checkout-error').textContent='';
   try{const r=await fetch(API+'/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(attempt)}),result=await r.json();if(!r.ok){if(r.status===409){await load();attempt=null;}throw Error(result.error||'Unable to submit your request.');}
     $('#confirmation').hidden=false;$('#confirmation').innerHTML=`<h2>Thank you, ${esc(draft.name)}.</h2><p>Your ${draft.requestOnly?'special request':'pre-order request'} has been received.</p><p><strong>Reference: ${esc(result.id.slice(0,8).toUpperCase())}</strong></p><p>${draft.requestOnly?'We’ll confirm availability and send a price quote.':money(result.total)+(result.deliveryPending?' estimated — final delivery charges to be confirmed':'')}</p>${result.discount?`<p>You saved ${money(result.discount)} with the buy 2, get the 3rd 60% off promotion.</p>`:''}<p>We will contact you to confirm availability, the dispatch date, delivery and payment arrangements.</p><p>${draft.payment==='bank'?esc(result.bankInstructions||'Bank details will be provided after confirmation.'):'Cash payment is subject to confirmation for your chosen delivery service.'}</p><p>Please wait for confirmation before transferring money. No payment has been taken.</p><p><a class="button" href="https://revive-restore-shop-service.silver-tune-8563.chatgpt.site/track" target="_blank" rel="noopener">Track your order</a></p><p>Use your reference above and the same phone number you entered at checkout to see when your order is confirmed, out for delivery, or delivered.</p><button type="button" class="button" id="finish-checkout">Continue browsing</button>`;
